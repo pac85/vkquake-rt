@@ -1,6 +1,13 @@
 project('vkquake', 'c', default_options : ['c_std=gnu11', 'buildtype=release'])
 
-cflags = ['-Wall', '-Wno-trigraphs', '-Wno-unused-function', '-Werror']
+cflags = [
+  '-Wall', 
+  '-Wno-trigraphs', 
+  '-Wno-unused-function', 
+  '-Wno-missing-braces', 
+  '-Wno-maybe-uninitialized', 
+  '-Werror'
+]
 
 srcs = [
     'Quake/bgmusic.c',
@@ -78,30 +85,6 @@ srcs = [
     'Quake/view.c',
     'Quake/wad.c',
     'Quake/world.c',
-    'Shaders/Compiled/Release/alias_alphatest.frag.c',
-    'Shaders/Compiled/Release/alias.frag.c',
-    'Shaders/Compiled/Release/alias.vert.c',
-    'Shaders/Compiled/Release/basic_alphatest.frag.c',
-    'Shaders/Compiled/Release/basic.frag.c',
-    'Shaders/Compiled/Release/basic_notex.frag.c',
-    'Shaders/Compiled/Release/basic.vert.c',
-    'Shaders/Compiled/Release/cs_tex_warp.comp.c',
-    'Shaders/Compiled/Release/postprocess.frag.c',
-    'Shaders/Compiled/Release/postprocess.vert.c',
-    'Shaders/Compiled/Release/screen_effects_10bit.comp.c',
-    'Shaders/Compiled/Release/screen_effects_10bit_scale.comp.c',
-    'Shaders/Compiled/Release/screen_effects_10bit_scale_sops.comp.c',
-    'Shaders/Compiled/Release/screen_effects_8bit.comp.c',
-    'Shaders/Compiled/Release/screen_effects_8bit_scale.comp.c',
-    'Shaders/Compiled/Release/screen_effects_8bit_scale_sops.comp.c',
-    'Shaders/Compiled/Release/showtris.frag.c',
-    'Shaders/Compiled/Release/showtris.vert.c',
-    'Shaders/Compiled/Release/sky_box.frag.c',
-    'Shaders/Compiled/Release/sky_layer.frag.c',
-    'Shaders/Compiled/Release/sky_layer.vert.c',
-    'Shaders/Compiled/Release/update_lightmap.comp.c',
-    'Shaders/Compiled/Release/world.frag.c',
-    'Shaders/Compiled/Release/world.vert.c',
 ]
 
 cc = meson.get_compiler('c')
@@ -171,4 +154,16 @@ if get_option('buildtype').startswith('debug')
     cflags += '-D_DEBUG'
 endif
 
-executable('vkquake', srcs, dependencies : deps, c_args : cflags)
+rtgl1_path = '/home/antonino/cose/RayTracedGL1/'
+incdir = include_directories(rtgl1_path + 'Include')
+linkargs = [
+  '-L' + rtgl1_path + 'Build', 
+  '-lRayTracedGL1', 
+  '-L../Linux/FidelityFX-FSR2/src/ffx-fsr2-api/build', 
+  '-l:libffx_fsr2_api_x86_64.a',
+  '-L../Linux/FidelityFX-FSR2/src/ffx-fsr2-api/build/vk', 
+  '-l:libffx_fsr2_api_vk_x86_64.a',
+  '-lstdc++'
+]
+
+executable('vkquake', srcs, dependencies : deps, c_args : cflags, include_directories : incdir, link_args : linkargs)

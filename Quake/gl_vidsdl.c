@@ -637,7 +637,7 @@ static void GL_InitInstance (void)
 
 #ifdef RG_USE_SURFACE_WIN32
 	RgWin32SurfaceCreateInfo win32Info = {.hinstance = wmInfo.info.win.hinstance, .hwnd = wmInfo.info.win.window};
-#elif RG_USE_SURFACE_XLIB
+#elif defined(RG_USE_SURFACE_XLIB)
 	RgXlibSurfaceCreateInfo x11Info = {.dpy = wmInfo.info.x11.display, .window = wmInfo.info.x11.window};
 #endif
 
@@ -651,7 +651,7 @@ static void GL_InitInstance (void)
 
 #ifdef RG_USE_SURFACE_WIN32
 		.pWin32SurfaceInfo = &win32Info,
-#elif RG_USE_SURFACE_XLIB
+#elif defined(RG_USE_SURFACE_XLIB)
 		.pXlibSurfaceCreateInfo = &x11Info,
 #endif
 		

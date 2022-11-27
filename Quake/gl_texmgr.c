@@ -37,11 +37,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 #if defined(__GNUC__)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-function"
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wstringop-truncation"
 #endif
 #include "stb_image_resize.h"
-#if defined(__GNUC__)
-#pragma GCC diagnostic pop
-#endif
+//#if defined(__GNUC__)
+//#pragma GCC diagnostic pop
+//#endif
 
 static cvar_t gl_max_size = {"gl_max_size", "0", CVAR_NONE};
 static cvar_t gl_picmip = {"gl_picmip", "0", CVAR_NONE};
@@ -188,8 +190,8 @@ void RGBtoHSV (const vec3_t rgb, vec3_t out_hsv)
 	float G = CLAMP (0.0f, rgb[1], 1.0f);
 	float B = CLAMP (0.0f, rgb[2], 1.0f);
 
-	float M = max (R, max (G, B));
-	float m = min (R, min (G, B));
+	float M = fmax (R, fmax (G, B));
+	float m = fmin (R, fmin (G, B));
 	float C = M - m; // Chroma
 
 	float H = 0.f; // Hue
@@ -226,7 +228,7 @@ void HSVtoRGB (const vec3_t hsv, vec3_t out_rgb)
 	float H = CLAMP (0.0f, hsv[0], 360.0f);
 	float S = CLAMP (0.0f, hsv[1], 1.0f);
 	// Note: don't clamp, as we modify it
-	float V = max (0.0f, hsv[2]);
+	float V = fmax (0.0f, hsv[2]);
 
 	float C = S * V;                        // Chroma
 	float HPrime = fmodf (H / 60, 6.f); // H'
@@ -272,9 +274,9 @@ void HSVtoRGB (const vec3_t hsv, vec3_t out_rgb)
 	B += M;
 
 	// Note: don't clamp, as we modify luminance
-	out_rgb[0] = max (0.0f, R);
-	out_rgb[1] = max (0.0f, G);
-	out_rgb[2] = max (0.0f, B);
+	out_rgb[0] = fmax (0.0f, R);
+	out_rgb[1] = fmax (0.0f, G);
+	out_rgb[2] = fmax (0.0f, B);
 }
 static void ModifyColorValue (vec3_t inout_color, float target_value)
 {
